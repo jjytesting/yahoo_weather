@@ -1,7 +1,7 @@
 {
   "name": "API.AI webhook demonstration",
   "description": "API.AI webhook demonstration",
-  "repository": "https://github.com/jjytesting/restaurant_search",
+  "repository": "https://github.com/jjytesting/yahoo_weather",
   "logo": "http://xvir.github.io/img/apiai.png",
   "keywords": ["api.ai", "natural language"]
 }
