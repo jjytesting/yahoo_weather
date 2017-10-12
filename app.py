@@ -34,32 +34,32 @@ app = Flask(__name__)
 
     
 @app.route('/webhook', methods=['POST'])
-def webhook(): #jj: what is this function for?
-    req = request.get_json(silent=True, force=True) #jj: I guess it gets input from api.ai with jason format.. is that correct?
+def webhook():
+    req = request.get_json(silent=True, force=True)
 
-    print("Request:") #jj: where it prints? why print this?
-    print(json.dumps(req, indent=4)) #jj: why it prints and where? How can I see it?
+    print("Request:")
+    print(json.dumps(req, indent=4)) 
 
-    res = processRequest(req) #jj: I guess this function is for requesting to yahoo
+    res = processRequest(req)
 
-    res = json.dumps(res, indent=4) #jj: I guess it create json file with yahoo returned result
+    res = json.dumps(res, indent=4)
     # print(res)
-    r = make_response(res) #jj: I guess it make jason file as sending format (?)
-    r.headers['Content-Type'] = 'application/json' #jj: I don't know what it is..
-    return r #jj: I guess this actually return the result
+    r = make_response(res) 
+    r.headers['Content-Type'] = 'application/json' 
+    return r
 
 
 def processRequest(req):
-    if req.get("result").get("action") != "yahooWeatherForecast": #jj: this keyword is for the api.ai action name predefined by bot maker
-        return {} #jj: why does it return empty dictionary?
-    baseurl = "https://query.yahooapis.com/v1/public/yql?" #jj: this seems call rest api beginning part to use yahoo api
-    yql_query = makeYqlQuery(req) # jj: It seems parsing json format to url query.
-    if yql_query is None: #jj: I understood it is failed to make url query.. why does it return empty dictionary?
+    if req.get("result").get("action") != "yahooWeatherForecast":
+        return {} 
+    baseurl = "https://query.yahooapis.com/v1/public/yql?" 
+    yql_query = makeYqlQuery(req) 
+    if yql_query is None: 
         return {}
-    yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json" #jj: if the makeYqlQuery made url query well, it combine url query to call yahoo api... but when I type it on the browser address area.. I can not get the result..
-    result = urlopen(yql_url).read() # jj: this seems calling yahoo api and get result from it
-    data = json.loads(result) # jj: and it seems convert result to json format again
-    res = makeWebhookResult(data) # jj: I think it makes the result format to fit api.ai require..
+    yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"  
+    result = urlopen(yql_url).read()
+    data = json.loads(result)
+    res = makeWebhookResult(data)
     return res
 
 
@@ -74,9 +74,7 @@ def makeYqlQuery(req):
 
 
 def makeWebhookResult(data):
-    # jj: I think this function is for parsing yahoo result.. and the bot maker only want to have location, condition(temp), units(for temp unit) in whole query result from yahoo
-    # jj: And it is in the result section > channel section > "location", "item > condition", "units"
-
+    
     query = data.get('query')
     if query is None:
         return {}
@@ -101,14 +99,13 @@ def makeWebhookResult(data):
 
     # print(json.dumps(item, indent=4))
 
-    # jj: I guess this makes full speech text to send api.ai
+    
     speech = "Today in " + location.get('city') + ": " + condition.get('text') + \
              ", the temperature is " + condition.get('temp') + " " + units.get('temperature')
 
     print("Response:")
     print(speech)
 
-    #jj: so this part is for making final format of result what I see in api.ai fullfillment documentation.
     return {
         "speech": speech,
         "displayText": speech,
@@ -119,8 +116,8 @@ def makeWebhookResult(data):
 
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000)) #jj: I don't understand this part
+    port = int(os.getenv('PORT', 5000)) 
 
-    print("Starting app on port %d" % port) #jj: where does it print? and why?
+    print("Starting app on port %d" % port)
 
-    app.run(debug=False, port=port, host='0.0.0.0') #jj: I don't understand this part.
+    app.run(debug=False, port=port, host='0.0.0.0') 
